@@ -283,6 +283,10 @@ function processCalculation() {
         }
         
         renderTenureCards(resultsArray);
+
+        // Inject policy details summary to the final result page for PDF print inclusion
+        const summaryHtml = document.getElementById('inputs-summary').innerHTML;
+        document.getElementById('final-policy-details').innerHTML = summaryHtml;
         
         currentStep = 4;
         updateStepUI();
