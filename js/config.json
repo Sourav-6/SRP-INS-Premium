@@ -1,0 +1,31 @@
+{
+  "basePremium": 5000,
+  "ageFactors": [
+    { "min": 0, "max": 17, "factor": 0.6 },
+    { "min": 18, "max": 35, "factor": 1.0 },
+    { "min": 36, "max": 45, "factor": 1.3 },
+    { "min": 46, "max": 55, "factor": 1.6 },
+    { "min": 56, "max": 65, "factor": 2.0 },
+    { "min": 66, "max": 120, "factor": 2.5 }
+  ],
+  "familyLoadingFactors": {
+    "1": 1.0,
+    "2": 1.8,
+    "3": 2.5,
+    "4": 3.0,
+    "5": 3.4,
+    "6": 3.8,
+    "7": 4.1,
+    "8": 4.4,
+    "9": 4.7,
+    "10": 5.0
+  },
+  "nriDiscount": 0.10,
+  "portingAdjustment": 0.05,
+  "planMultipliers": {
+    "R1": 1.0,
+    "R2_AND_ABOVE": 1.4
+  },
+  "claimLoading": 0.20,
+  "existingCustomerDiscount": 0.08
+}

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Insurance Premium Calculator | Premium4Insure</title>
+    <meta name="description" content="Calculate your health insurance premium accurately with our advanced calculator.">
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="./css/styles.css">
+
+    <!-- PDF Generation Libraries (Loaded from CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1 class="app-title">Premium4Insure</h1>
+        <p class="text-muted">Calculate your health insurance premium instantly.</p>
+        
+        <div class="theme-switch-wrapper">
+            <span class="mr-2 text-sm text-muted">Dark Mode</span>
+            <label class="theme-switch" for="theme-toggle">
+                <input type="checkbox" id="theme-toggle">
+                <div class="slider round"></div>
+            </label>
+        </div>
+    </header>
+
+    <div class="glass-card">
+        <!-- Progress Indicator -->
+        <div class="stepper-container">
+            <div id="progress-bar" style="width: 0%;"></div>
+            <div class="step-indicator active">1</div>
+            <div class="step-indicator">2</div>
+            <div class="step-indicator">3</div>
+            <div class="step-indicator">4</div>
+        </div>
+
+        <form id="calculator-form" onsubmit="return false;">
+            
+            <!-- STEP 1: Family Details -->
+            <div class="form-step fade-in" data-step="1">
+                <h2 class="mb-4">Family Details</h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="sumInsured">Sum Insured <span class="text-error">*</span></label>
+                        <select id="sumInsured" name="sumInsured" class="form-control" required>
+                            <option value="" disabled selected>Select Sum Insured</option>
+                            <option value="1000000">10 Lakhs</option>
+                            <option value="1500000">15 Lakhs</option>
+                            <option value="2000000">20 Lakhs</option>
+                            <option value="2500000">25 Lakhs</option>
+                            <option value="5000000">50 Lakhs</option>
+                            <option value="10000000">1 Crore</option>
+                            <option value="20000000">2 Crores</option>
+                        </select>
+                        <span class="error-msg" id="error-sumInsured"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="memberCount">Number of Members <span class="text-error">*</span></label>
+                        <select id="memberCount" name="memberCount" class="form-control" required>
+                            <option value="" disabled selected>Select members (1-10)</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                        <span class="error-msg" id="error-memberCount"></span>
+                    </div>
+                </div>
+
+                <div id="dynamic-members-container">
+                    <!-- Cards injected via JS -->
+                </div>
+
+                <div class="btn-actions">
+                    <div></div> <!-- Spacer -->
+                    <button type="button" class="btn btn-primary next-btn">Next Step ➔</button>
+                </div>
+            </div>
+
+            <!-- STEP 2: Additional Information -->
+            <div class="form-step hidden" data-step="2">
+                <h2 class="mb-4">Additional Information</h2>
+                
+                <div class="alert alert-info mb-4" style="background-color: var(--primary-light); color: var(--primary-dark); padding: 1rem; border-radius: 0.5rem;">
+                    Discounts have been temporarily disabled to focus on the base premium calculation.
+                </div>
+                <div class="form-grid" style="display: none;">
+                    <div class="form-group">
+                        <label>NRI Discount <span class="text-error">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-card">
+                                <input type="radio" name="nri" value="yes">
+                                <span class="radio-card-content">Yes</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="nri" value="no" checked>
+                                <span class="radio-card-content">No</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Porting <span class="text-error">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-card">
+                                <input type="radio" name="porting" value="yes">
+                                <span class="radio-card-content">Yes</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="porting" value="no" checked>
+                                <span class="radio-card-content">No</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Deductible Amount <span class="text-error">*</span></label>
+                        <select name="deductible" class="form-control">
+                            <option value="0">None</option>
+                            <option value="10000">₹10,000</option>
+                            <option value="25000">₹25,000</option>
+                            <option value="50000">₹50,000</option>
+                            <option value="100000">₹1,00,000</option>
+                            <option value="200000">₹2,00,000</option>
+                            <option value="300000">₹3,00,000</option>
+                            <option value="500000">₹5,00,000</option>
+                            <option value="1000000">₹10,00,000</option>
+                            <option value="2000000">₹20,00,000</option>
+                            <option value="2500000">₹25,00,000</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>New Policy? (All members < 35 yrs) <span class="text-error">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-card">
+                                <input type="radio" name="newPolicy" value="yes">
+                                <span class="radio-card-content">Yes</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="newPolicy" value="no" checked>
+                                <span class="radio-card-content">No</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>First-time buyer of Health Insurance? <span class="text-error">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-card">
+                                <input type="radio" name="firstTimeBuyer" value="yes">
+                                <span class="radio-card-content">Yes</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="firstTimeBuyer" value="no" checked>
+                                <span class="radio-card-content">No</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Any Claim in Last 2 Years? <span class="text-error">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-card">
+                                <input type="radio" name="claim" value="yes">
+                                <span class="radio-card-content">Yes</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="claim" value="no" checked>
+                                <span class="radio-card-content">No</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Active Loyalty Policy > ₹2000? <span class="text-error">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-card">
+                                <input type="radio" name="loyalty" value="yes">
+                                <span class="radio-card-content">Yes</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="loyalty" value="no" checked>
+                                <span class="radio-card-content">No</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-actions">
+                    <button type="button" class="btn btn-secondary back-btn">⬅ Back</button>
+                    <button type="button" class="btn btn-primary next-btn">Review ➔</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Review & Calculate -->
+            <div class="form-step hidden" data-step="3">
+                <h2 class="mb-4">Review Details</h2>
+                
+                <div class="glass-card" style="background: var(--surface);">
+                    <div id="inputs-summary">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+
+                <div class="btn-actions">
+                    <button type="button" class="btn btn-secondary back-btn">⬅ Back</button>
+                    <button type="button" class="btn btn-primary next-btn" id="calculate-btn">Calculate Premium ⚡</button>
+                </div>
+            </div>
+
+            <!-- STEP 4: Output / Result -->
+            <div class="form-step hidden" data-step="4">
+                <div id="premium-summary-card">
+                    <h3 class="mb-4">Select Tenure to Compare</h3>
+                    <div id="tenure-cards-container" style="display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; margin-bottom: 1rem;">
+                        <!-- Injected by JS -->
+                    </div>
+
+                    <h3 class="mb-3">Premium Breakdown</h3>
+                    <div class="glass-card" style="padding: 0; overflow: hidden; background: var(--surface);">
+                        <table class="breakdown-table">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th class="text-right">Amount (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="breakdown-table-body">
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="btn-actions" style="flex-wrap: wrap; gap: 1rem;">
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="button" class="btn btn-secondary" id="edit-btn">✎ Edit Inputs</button>
+                        <button type="button" class="btn btn-secondary" id="reset-btn">↺ Reset Form</button>
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="button" class="btn btn-secondary" id="copy-btn">📋 Copy</button>
+                        <button type="button" class="btn btn-secondary" id="print-btn">🖨️ Print</button>
+                        <button type="button" class="btn btn-primary" id="download-btn">📄 Download PDF</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- Main App Module -->
+<script type="module" src="./js/app.js"></script>
+
+</body>
+</html>
