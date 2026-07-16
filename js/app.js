@@ -1,12 +1,13 @@
 import { validateInputs } from './validation.js';
 import { calculatePremium } from './calculator.js';
 import { formatCurrency, showNotification, copyToClipboard } from './utils.js';
-import { printQuote, downloadPDF } from './pdf.js';
+import { downloadPDF } from './pdf.js';
 
 let appConfig = null;
 let appRates = null;
 let currentStep = 1;
 const totalSteps = 4;
+let selectedPremium = 0;
 
 document.addEventListener('DOMContentLoaded', async () => {
     // 1. Load config and rates
@@ -344,6 +345,7 @@ function renderTenureCards(resultsArray) {
 }
 
 function renderPremiumResult({ breakdown, finalPremium }) {
+    selectedPremium = finalPremium;
     const tableBody = document.getElementById('breakdown-table-body');
     
     tableBody.innerHTML = '';
@@ -450,10 +452,8 @@ function initActionButtons() {
         showNotification('Form reset successfully.');
     });
 
-    document.getElementById('print-btn').addEventListener('click', printQuote);
     document.getElementById('download-btn').addEventListener('click', downloadPDF);
     document.getElementById('copy-btn').addEventListener('click', () => {
-        const amount = document.getElementById('final-premium-amount').innerText;
-        copyToClipboard(`My estimated health insurance premium is ${amount}`);
+        copyToClipboard(`My estimated health insurance premium is ${formatCurrency(selectedPremium)}`);
     });
 }
