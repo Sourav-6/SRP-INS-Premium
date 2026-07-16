@@ -29,6 +29,11 @@ export async function downloadPDF() {
         summaryCard.style.backgroundColor = isDark ? '#121212' : '#f5f7fa';
         summaryCard.style.color = 'var(--text)';
         
+        // Save scroll position and scroll to top to prevent html2canvas cropping content below the fold
+        const scrollX = window.scrollX;
+        const scrollY = window.scrollY;
+        window.scrollTo(0, 0);
+
         // Ensure html2canvas and jspdf are available
         if (typeof window.html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
             throw new Error('PDF libraries are not loaded. Please ensure internet connection.');
@@ -41,11 +46,16 @@ export async function downloadPDF() {
             scale: 2, // Higher quality
             useCORS: true,
             logging: false,
-            backgroundColor: isDark ? '#121212' : '#f5f7fa'
+            backgroundColor: isDark ? '#121212' : '#f5f7fa',
+            scrollX: 0,
+            scrollY: 0,
+            windowWidth: document.documentElement.clientWidth,
+            windowHeight: document.documentElement.clientHeight
         });
 
-        // Restore styles immediately
+        // Restore styles and scroll position immediately
         summaryCard.style.cssText = originalStyle;
+        window.scrollTo(scrollX, scrollY);
 
         // Calculate dimensions (Standard PDF width 210mm, height scaled proportionally)
         const imgData = canvas.toDataURL('image/png');
