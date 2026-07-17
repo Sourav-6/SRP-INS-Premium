@@ -217,14 +217,28 @@ function populateSummaryStep(formData) {
     const sumInsured = formData.get('sumInsured');
     const fmtSi = sumInsured >= 10000000 ? `${sumInsured/10000000} Crore` : `${sumInsured/100000} Lakhs`;
     
+    const policyHistoryLabels = {
+        'first_time_buyer': 'First-time buyer of Health Insurance',
+        '1_yr_old_with_claim': '1 year old policy with claim',
+        '1_yr_old_without_claim': '1 year old policy without claim',
+        '2_yr_plus_without_claim': '2+ years old policy without claim',
+        '2_yr_plus_with_claim_one_yr': '2+ years old policy with claim in any one year',
+        '2_yr_plus_with_claim_both_yrs': '2+ years old policy with claim in both years'
+    };
+    const policyHistoryVal = formData.get('policyHistory');
+    const historyText = policyHistoryLabels[policyHistoryVal] || policyHistoryVal;
+    
+    const deductibleVal = parseInt(formData.get('deductible'), 10);
+    const deductibleText = deductibleVal === 0 ? 'None' : `₹${new Intl.NumberFormat('en-IN').format(deductibleVal)}`;
+
     html += `<div><strong>Sum Insured:</strong> ₹${fmtSi}</div>`;
     html += `<div><strong>Members:</strong> ${memberCount}</div>`;
-    html += `<div><strong>Deductible:</strong> ₹${formData.get('deductible')}</div>`;
-    html += `<div><strong>NRI:</strong> ${formData.get('nri') === 'yes' ? 'Yes' : 'No'}</div>`;
-    html += `<div><strong>New Policy (<35):</strong> ${formData.get('newPolicy') === 'yes' ? 'Yes' : 'No'}</div>`;
-    html += `<div><strong>First-Time Buyer:</strong> ${formData.get('firstTimeBuyer') === 'yes' ? 'Yes' : 'No'}</div>`;
-    html += `<div><strong>Claims (2 yrs):</strong> ${formData.get('claim') === 'yes' ? 'Yes' : 'No'}</div>`;
-    html += `<div><strong>Active Loyalty:</strong> ${formData.get('loyalty') === 'yes' ? 'Yes' : 'No'}</div>`;
+    html += `<div><strong>Deductible:</strong> ${deductibleText}</div>`;
+    html += `<div><strong>All Insured NRI's:</strong> ${formData.get('nri') === 'yes' ? 'Yes' : 'No'}</div>`;
+    html += `<div><strong>Porting Policy:</strong> ${formData.get('porting') === 'yes' ? 'Yes' : 'No'}</div>`;
+    html += `<div><strong>Existing HDFC Ergo Customer:</strong> ${formData.get('existingCustomer') === 'yes' ? 'Yes' : 'No'}</div>`;
+    html += `<div><strong>Claim in last 2 years:</strong> ${formData.get('claim') === 'yes' ? 'Yes' : 'No'}</div>`;
+    html += `<div class="col-span-2"><strong>Policy History:</strong> ${historyText}</div>`;
     
     html += `</div><hr class="my-4" />`;
     html += `<h4 class="font-semibold mb-2">Member Details</h4><ul class="list-disc pl-5">`;
@@ -249,12 +263,12 @@ function processCalculation() {
     const baseInputs = {
         sumInsured: parseInt(formData.get('sumInsured'), 10),
         members: [],
-        nri: formData.get('nri'),
+        nri: formData.get('nri') === 'yes',
         deductible: parseInt(formData.get('deductible'), 10),
-        newPolicy: formData.get('newPolicy'),
-        firstTimeBuyer: formData.get('firstTimeBuyer'),
-        claim: formData.get('claim'),
-        loyalty: formData.get('loyalty')
+        policyHistory: formData.get('policyHistory'),
+        porting: formData.get('porting') === 'yes',
+        existingCustomer: formData.get('existingCustomer') === 'yes',
+        claim: formData.get('claim') === 'yes'
     };
 
     const count = parseInt(formData.get('memberCount'), 10);
@@ -381,12 +395,11 @@ function renderPremiumResult({ breakdown, finalPremium }) {
         `;
     });
 
-    // Verification Note for PDF
+    // Total Net Premium row
     tableBody.innerHTML += `
-        <tr>
-            <td colspan="2" class="text-muted" style="font-size: 0.85rem; padding-top: 1rem; border-top: 1px solid var(--border);">
-                <strong>Calculation Method:</strong> The oldest member (max eligible age 60) is considered the Primary member and pays 100% of their base premium. All other family members receive a 55% Floater Discount (paying only 45% of their base premium). The family base premium is then multiplied by the chosen policy tenure.
-            </td>
+        <tr style="font-weight: bold; border-top: 2px solid var(--border); font-size: 1.1rem; background: var(--primary-light-alpha);">
+            <td>Total Net Premium</td>
+            <td class="text-right text-primary">${formatCurrency(finalPremium)}</td>
         </tr>
     `;
 }
@@ -453,7 +466,4 @@ function initActionButtons() {
     });
 
     document.getElementById('download-btn').addEventListener('click', downloadPDF);
-    document.getElementById('copy-btn').addEventListener('click', () => {
-        copyToClipboard(`My estimated health insurance premium is ${formatCurrency(selectedPremium)}`);
-    });
 }

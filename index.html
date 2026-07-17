@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Insurance Premium Calculator | Premium4Insure</title>
+    <title>Health Insurance Premium Calculator | SRP Insure</title>
     <meta name="description" content="Calculate your health insurance premium accurately with our advanced calculator.">
     
     <!-- Google Fonts: Inter -->
@@ -22,7 +22,7 @@
 
 <div class="container">
     <header>
-        <h1 class="app-title">Premium4Insure</h1>
+        <h1 class="app-title">SRP Insure</h1>
         <p class="text-muted">Calculate your health insurance premium instantly.</p>
         
         <div class="theme-switch-wrapper">
@@ -99,12 +99,21 @@
             <div class="form-step hidden" data-step="2">
                 <h2 class="mb-4">Additional Information</h2>
                 
-                <div class="alert alert-info mb-4" style="background-color: var(--primary-light); color: var(--primary-dark); padding: 1rem; border-radius: 0.5rem;">
-                    Discounts have been temporarily disabled to focus on the base premium calculation.
-                </div>
-                <div class="form-grid" style="display: none;">
+                <div class="form-grid">
+                    <div class="form-group col-span-2">
+                        <label for="policyHistory">Policy History & Claims Record <span class="text-error">*</span></label>
+                        <select id="policyHistory" name="policyHistory" class="form-control" required>
+                            <option value="first_time_buyer" selected>First-time buyer of Health Insurance</option>
+                            <option value="1_yr_old_with_claim">1 year old policy with claim</option>
+                            <option value="1_yr_old_without_claim">1 year old policy without claim</option>
+                            <option value="2_yr_plus_without_claim">2 or more years old policy without claim</option>
+                            <option value="2_yr_plus_with_claim_one_yr">2 or more years old policy with claim in any one year</option>
+                            <option value="2_yr_plus_with_claim_both_yrs">2 or more years old policy with claim in both years</option>
+                        </select>
+                    </div>
+
                     <div class="form-group">
-                        <label>NRI Discount <span class="text-error">*</span></label>
+                        <label>Are all insured NRI's? <span class="text-error">*</span></label>
                         <div class="radio-group">
                             <label class="radio-card">
                                 <input type="radio" name="nri" value="yes">
@@ -117,8 +126,10 @@
                         </div>
                     </div>
 
+
+
                     <div class="form-group">
-                        <label>Porting <span class="text-error">*</span></label>
+                        <label>Porting Policy? <span class="text-error">*</span></label>
                         <div class="radio-group">
                             <label class="radio-card">
                                 <input type="radio" name="porting" value="yes">
@@ -132,6 +143,34 @@
                     </div>
 
                     <div class="form-group">
+                        <label>Existing HDFC Ergo Customer? <span class="text-error">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-card">
+                                <input type="radio" name="existingCustomer" value="yes">
+                                <span class="radio-card-content">Yes</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="existingCustomer" value="no" checked>
+                                <span class="radio-card-content">No</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Claim in last 2 years? <span class="text-error">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-card">
+                                <input type="radio" name="claim" value="yes">
+                                <span class="radio-card-content">Yes</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="claim" value="no" checked>
+                                <span class="radio-card-content">No</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-span-2">
                         <label>Deductible Amount <span class="text-error">*</span></label>
                         <select name="deductible" class="form-control">
                             <option value="0">None</option>
@@ -146,62 +185,6 @@
                             <option value="2000000">₹20,00,000</option>
                             <option value="2500000">₹25,00,000</option>
                         </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>New Policy? (All members < 35 yrs) <span class="text-error">*</span></label>
-                        <div class="radio-group">
-                            <label class="radio-card">
-                                <input type="radio" name="newPolicy" value="yes">
-                                <span class="radio-card-content">Yes</span>
-                            </label>
-                            <label class="radio-card">
-                                <input type="radio" name="newPolicy" value="no" checked>
-                                <span class="radio-card-content">No</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>First-time buyer of Health Insurance? <span class="text-error">*</span></label>
-                        <div class="radio-group">
-                            <label class="radio-card">
-                                <input type="radio" name="firstTimeBuyer" value="yes">
-                                <span class="radio-card-content">Yes</span>
-                            </label>
-                            <label class="radio-card">
-                                <input type="radio" name="firstTimeBuyer" value="no" checked>
-                                <span class="radio-card-content">No</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Any Claim in Last 2 Years? <span class="text-error">*</span></label>
-                        <div class="radio-group">
-                            <label class="radio-card">
-                                <input type="radio" name="claim" value="yes">
-                                <span class="radio-card-content">Yes</span>
-                            </label>
-                            <label class="radio-card">
-                                <input type="radio" name="claim" value="no" checked>
-                                <span class="radio-card-content">No</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Active Loyalty Policy > ₹2000? <span class="text-error">*</span></label>
-                        <div class="radio-group">
-                            <label class="radio-card">
-                                <input type="radio" name="loyalty" value="yes">
-                                <span class="radio-card-content">Yes</span>
-                            </label>
-                            <label class="radio-card">
-                                <input type="radio" name="loyalty" value="no" checked>
-                                <span class="radio-card-content">No</span>
-                            </label>
-                        </div>
                     </div>
                 </div>
 
@@ -223,7 +206,7 @@
 
                 <div class="btn-actions">
                     <button type="button" class="btn btn-secondary back-btn">⬅ Back</button>
-                    <button type="button" class="btn btn-primary next-btn" id="calculate-btn">Calculate Premium ⚡</button>
+                    <button type="button" class="btn btn-primary next-btn" id="calculate-btn">Calculate Premium</button>
                 </div>
             </div>
 
@@ -264,7 +247,6 @@
                         <button type="button" class="btn btn-secondary" id="reset-btn">↺ Reset Form</button>
                     </div>
                     <div style="display: flex; gap: 1rem;">
-                        <button type="button" class="btn btn-secondary" id="copy-btn">📋 Copy</button>
                         <button type="button" class="btn btn-primary" id="download-btn">📄 Download PDF</button>
                     </div>
                 </div>

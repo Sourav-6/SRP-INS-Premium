@@ -27,12 +27,16 @@ export async function downloadPDF() {
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         summaryCard.style.padding = '24px';
         summaryCard.style.backgroundColor = isDark ? '#121212' : '#f5f7fa';
-        summaryCard.style.color = 'var(--text)';
         
         // Save scroll position and scroll to top to prevent html2canvas cropping content below the fold
         const scrollX = window.scrollX;
         const scrollY = window.scrollY;
         window.scrollTo(0, 0);
+
+        // Hide elements not desired in the PDF
+        const noPdfElements = summaryCard.querySelectorAll('.no-pdf');
+        const originalDisplays = Array.from(noPdfElements).map(el => el.style.display);
+        noPdfElements.forEach(el => el.style.display = 'none');
 
         // Ensure html2canvas and jspdf are available
         if (typeof window.html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
@@ -52,6 +56,9 @@ export async function downloadPDF() {
             windowWidth: document.documentElement.clientWidth,
             windowHeight: document.documentElement.clientHeight
         });
+
+        // Restore hidden elements
+        noPdfElements.forEach((el, idx) => el.style.display = originalDisplays[idx]);
 
         // Restore styles and scroll position immediately
         summaryCard.style.cssText = originalStyle;

@@ -19,15 +19,9 @@ export function validateInputs(formData) {
         const age = parseInt(ageField, 10);
         if (!ageField || isNaN(age) || age < 1) {
             errors.push({ field: `memberAge_${i}`, message: 'Age is required and must be a valid number.' });
-        } else if (age > 60) {
-            hasOver60 = true;
-            errors.push({ field: `memberAge_${i}`, message: 'Maximum eligible age is 60 years.' });
+        } else if (age > 90) {
+            errors.push({ field: `memberAge_${i}`, message: 'Maximum eligible age is 90 years.' });
         }
-    }
-
-    if (hasOver60) {
-        // Add a general error that can be caught if needed, though field-specific is enough.
-        errors.push({ field: 'general', message: 'The oldest member must be 60 years or younger to avail this premium.' });
     }
 
     if (!formData.get('sumInsured')) {
